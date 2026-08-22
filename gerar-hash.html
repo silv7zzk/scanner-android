@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Gerador de Hash SHA-256</title>
+  <style>
+    body{margin:0;padding:24px;background:#101010;color:#eee;font:16px Arial,sans-serif}
+    main{max-width:560px;margin:auto;background:#1d1d1d;padding:22px;border-radius:12px}
+    h1{font-size:22px} label{display:block;margin:18px 0 8px;color:#bbb}
+    input,textarea,button{box-sizing:border-box;width:100%;padding:13px;border-radius:7px;border:1px solid #555;background:#111;color:#fff;font-size:15px}
+    button{margin-top:14px;background:#fff;color:#111;font-weight:bold;border:0}
+    textarea{min-height:90px;resize:vertical} small{color:#999;line-height:1.5}
+    .ok{color:#70e070;margin-top:12px;word-break:break-all}
+  </style>
+</head>
+<body>
+<main>
+  <h1>Gerador de Hash SHA-256</h1>
+  <small>A Key é processada localmente no navegador. Não publique a Key original; copie somente o hash.</small>
+  <label for="key">Digite a Key</label>
+  <input id="key" type="password" autocomplete="off" placeholder="Ex.: SV-CLIENTE-001-2026">
+  <button id="generate">GERAR HASH</button>
+  <label for="hash">Hash para colocar no keys.json</label>
+  <textarea id="hash" readonly placeholder="O hash aparecerá aqui"></textarea>
+  <button id="copy">COPIAR HASH</button>
+  <div id="status" class="ok"></div>
+</main>
+<script>
+const key = document.getElementById('key');
+const hash = document.getElementById('hash');
+const status = document.getElementById('status');
+async function generate() {
+  const value = key.value.trim().toUpperCase();
+  if (!value) { status.textContent = 'Digite uma Key primeiro.'; hash.value = ''; return; }
+  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(value));
+  hash.value = Array.from(new Uint8Array(digest), b => b.toString(16).padStart(2, '0')).join('');
+  status.textContent = 'Hash gerado. Copie somente o conteúdo acima.';
+}
+document.getElementById('generate').onclick = generate;
+document.getElementById('copy').onclick = async () => {
+  if (!hash.value) await generate();
+  if (hash.value) { await navigator.clipboard.writeText(hash.value); status.textContent = 'Hash copiado.'; }
+};
+</script>
+</body>
+</html>

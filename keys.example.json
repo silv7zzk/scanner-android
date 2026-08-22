@@ -1,0 +1,37 @@
+{
+  "version": 1,
+  "keys": [
+    {
+      "id": "demo-diaria-001",
+      "hash": "COLOQUE_AQUI_O_SHA256_DA_KEY",
+      "plan": "diaria",
+      "createdAt": "2026-08-21T00:00:00Z",
+      "revoked": false,
+      "note": "Exemplo: expira 1 dia após createdAt"
+    },
+    {
+      "id": "demo-semanal-001",
+      "hash": "COLOQUE_AQUI_O_SHA256_DA_KEY",
+      "plan": "semanal",
+      "createdAt": "2026-08-21T00:00:00Z",
+      "revoked": false,
+      "note": "Exemplo: expira 7 dias após createdAt"
+    },
+    {
+      "id": "demo-mensal-001",
+      "hash": "COLOQUE_AQUI_O_SHA256_DA_KEY",
+      "plan": "mensal",
+      "createdAt": "2026-08-21T00:00:00Z",
+      "revoked": false,
+      "note": "Exemplo: expira 30 dias após createdAt"
+    },
+    {
+      "id": "demo-permanente-001",
+      "hash": "COLOQUE_AQUI_O_SHA256_DA_KEY",
+      "plan": "permanente",
+      "createdAt": "2026-08-21T00:00:00Z",
+      "revoked": false,
+      "note": "Exemplo: sem expiração automática"
+    }
+  ]
+}

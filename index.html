@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SV SCANNER ANALYST</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <canvas id="matrixCanvas"></canvas>
+
+    <div id="loginOverlay">
+        <div class="login-card">
+            <div class="login-header">
+                <h1>SV SCANNER ANALYST</h1>
+                <p>Android Forensic Terminal</p>
+            </div>
+            <div class="input-group">
+                <label>Access Key via GitHub</label>
+                <input type="password" id="passwordField" placeholder="Digite a chave..." onkeydown="if(event.key==='Enter') handleLogin()">
+            </div>
+            <button class="btn-login" id="loginBtn">AUTORIZAR</button>
+            <div id="loginError" class="login-error">CHAVE INVÁLIDA</div>
+            <div id="keyStatus" class="key-status" aria-live="polite"></div>
+        </div>
+    </div>
+
+    <div id="accessGrantedOverlay">
+        <div class="access-granted-text">ACCESS GRANTED</div>
+    </div>
+    <div id="accessDeniedOverlay">
+        <div class="access-denied-text">ACCESS DENIED</div>
+    </div>
+
+    <div class="container" id="mainContainer">
+        <div class="logo-container">
+            <div class="avatar-wrapper">
+                <img class="avatar-photo" src="avatar.png" alt="SV">
+            </div>
+        </div>
+
+        <div class="subtitle">
+            ANALISADOR FORENSE DE SISTEMA ANDROID<br>
+            <span style="font-size: 12px; color: #888;">Varredura profunda de bugreport/dumpsys</span>
+        </div>
+
+        <div class="search-card">
+            <div class="search-icon">
+                <svg viewBox="0 0 24 24">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+            </div>
+            <div class="search-text">
+                AUDITORIA DE PRIVACIDADE E SEGURANÇA
+            </div>
+        </div>
+
+        <div class="desc-card">
+            <div class="desc-text">
+                Faça upload do bugreport/dumpsys do Android. O sistema analisará os arquivos buscando <strong>aplicativos disfarçados</strong>, <strong>proxys externos</strong>, <strong>rastros de root</strong>, <strong>ferramentas suspeitas</strong> e <strong>pareamentos ADB/USB</strong>.
+            </div>
+            <div class="powered-by">Powered by <strong>SILV7ZZK</strong></div>
+        </div>
+
+        <div class="upload-outer" id="uploadOuter">
+            <svg class="upload-icon" viewBox="0 0 24 24">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
+            </svg>
+            <div class="upload-label">UPLOAD BUGREPORT</div>
+            <div class="upload-hint">Arraste ou clique (.zip / .tar.gz / .txt)</div>
+            <input type="file" id="fileInput" style="display:none" accept=".zip,.gz,.tar.gz,.tgz,.txt,application/gzip,application/x-gzip,application/x-tar,application/x-compressed-tar,text/plain,application/zip">
+        </div>
+
+        <div id="progressContainer">
+            <div class="progress-steps">
+                <div class="step-item" id="step1"><div class="step-dot"></div><div class="step-text">Lendo arquivo...</div></div>
+                <div class="step-item" id="step2"><div class="step-dot"></div><div class="step-text">Extraindo logs...</div></div>
+                <div class="step-item" id="step3"><div class="step-dot"></div><div class="step-text">Analisando pacotes...</div></div>
+                <div class="step-item" id="step4"><div class="step-dot"></div><div class="step-text">Verificando conexões...</div></div>
+                <div class="step-item" id="step5"><div class="step-dot"></div><div class="step-text">Relatório final...</div></div>
+            </div>
+            <div class="loading-bar-container"><div class="loading-bar" id="loadingBar"></div></div>
+        </div>
+
+        <div id="fileInfoBar" class="file-info-bar" style="display:none"></div>
+        <div id="errorCard" class="error-card"></div>
+
+        <div id="deviceSection" style="width: 100%; display: none; flex-direction: column; gap: 15px; margin-top: 20px;">
+            <div class="device-hero" id="deviceHero">
+                <div class="device-hero-icon" id="deviceHeroIcon">🔒</div>
+                <div class="device-hero-text">
+                    <div class="device-hero-label">VERIFIED BOOT STATE</div>
+                    <div class="device-hero-value" id="deviceHeroValue">-</div>
+                    <div class="device-hero-desc" id="deviceHeroDesc"></div>
+                </div>
+            </div>
+
+            <div class="device-info-card">
+                <div class="device-info-title">Dispositivo</div>
+                <div class="device-info-grid">
+                    <div class="cell"><div class="k">Modelo</div><div class="v" id="andModel">-</div></div>
+                    <div class="cell"><div class="k">Fabricante</div><div class="v" id="andManufacturer">-</div></div>
+                    <div class="cell"><div class="k">Marca</div><div class="v" id="andBrand">-</div></div>
+                    <div class="cell"><div class="k">Android</div><div class="v" id="andVersion">-</div></div>
+                    <div class="cell"><div class="k">SDK</div><div class="v" id="andSdk">-</div></div>
+                    <div class="cell"><div class="k">Build ID</div><div class="v" id="andBuildId">-</div></div>
+                    <div class="cell"><div class="k">Build type</div><div class="v" id="andBuildType">-</div></div>
+                    <div class="cell"><div class="k">Fingerprint</div><div class="v" id="andFingerprint">-</div></div>
+                    <div class="cell full"><div class="k">Serial (HWID)</div><div class="v" id="andSerial">-</div></div>
+                </div>
+            </div>
+
+            <div class="state-list" id="stateList"></div>
+
+            <div id="dashboardContainer" style="width: 100%; display: none; flex-direction: column; gap: 15px; margin-top: 10px;"></div>
+
+            <div id="cleanCard" class="clean-card">
+                <div class="clean-title">DISPOSITIVO LIMPO</div>
+                <div class="clean-desc">Nenhuma assinatura suspeita foi encontrada nos logs analisados.</div>
+            </div>
+        </div>
+
+        <div class="dev-section"><div class="dev-title">DEVELOPED BY <strong>SILV7ZZK SCREEN</strong></div></div>
+        <div class="footer">SILV7ZZK &copy; 2024 &nbsp;&bull;&nbsp; ALL RIGHTS RESERVED</div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js"></script>
+    <script src="key-system.js"></script>
+    <script src="detect.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
